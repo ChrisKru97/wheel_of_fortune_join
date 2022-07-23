@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xcamp</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+
+  <!-- <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-firestore.js"></script> -->
+
+  <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-firestore-compat.js"></script>
+
+  <style media="screen">
+    body {
+      margin: 0;
+      background-color: #6b9867;
+      height: 100vh;
+      width: 100%;
+      font-size: 10vw;
+      font-family: Roboto, sans-serif;
+    }
+
+    #form {
+      height: 100vh;
+      gap: 3vw;
+      justify-content: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #sent-info {
+      padding: 3vw;
+      display: none;
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #submit {
+      border: none;
+      background-color: darkcyan;
+      color: white;
+      font-size: 10vw;
+      border-radius: 5vw;
+      padding: 1vw 5vw;
+    }
+
+    #name-input {
+      font-size: 5vw;
+      border: none;
+      outline: none;
+      border-radius: 1vw;
+      padding: 1vw 2vw;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="form">
+    <label for="name">Celé jméno:</label>
+    <input type="text" id="name-input" name="name" />
+    <button id="submit">Připojit se!</button>
+  </div>
+  <div id="sent-info">
+    <span><strong><span id="name"></span></strong>, jste úspěšně připojen. 🥳</span>
+  </div>
+
+  <script>
+    const name = localStorage.getItem("sent");
+    if (name) {
+      document.getElementById("form").style.display = "none";
+      document.getElementById("sent-info").style.display = "flex";
+      document.getElementById("name").textContent = name;
+    } else {
+      document.getElementById("name-input").focus();
+    }
+  </script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAx5PEFdFrP1Rya_Y7xgsu78xZfG-dMlso",
+      authDomain: "xcamp-select.firebaseapp.com",
+      projectId: "xcamp-select",
+      storageBucket: "xcamp-select.appspot.com",
+      messagingSenderId: "838699332775",
+      appId: "1:838699332775:web:f3222772e13ea50025d782"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+  </script>
+
+  <script>
+    const db = firebase.firestore();
+    let clicked = false;
+    document.getElementById("submit").onclick = () => {
+      const name = document.getElementById("name-input").value;
+      if (clicked || !name) return;
+      clicked = true;
+      db.collection("users").add({
+        name,
+        time: Date.now(),
+      }).then(() => {
+        localStorage.setItem("sent", name);
+        document.getElementById("form").style.display = "none";
+        document.getElementById("sent-info").style.display = "flex";
+        document.getElementById("name").textContent = name;
+      });
+    }
+  </script>
+</body>
+
+</html>
